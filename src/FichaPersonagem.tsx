@@ -1,7 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useJogadorStore } from "./context/AuthContext";
 import type { PersonagemType } from "./utils/PersonagemType";
+import { toast } from "sonner";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -12,7 +13,8 @@ type SistemaType = {
 
 export default function FichaPersonagem() {
   const params = useParams();
-  const { token } = useJogadorStore();
+  const navigate = useNavigate(); // 2. Inicializado o hook de navegação
+  const { token, jogador } = useJogadorStore();
 
   const [personagem, setPersonagem] = useState<PersonagemType | null>(null);
   const [nomeSistema, setNomeSistema] = useState<string | null>(null);
@@ -61,6 +63,31 @@ export default function FichaPersonagem() {
     }
   }, [token, params.personagemId]);
 
+  const excluirPersonagem = async () => {
+    if (!personagem) return;
+
+    if (window.confirm(`Tem certeza que deseja excluir o personagem "${personagem.nome}"?`)) {
+      try {
+        const response = await fetch(`${apiUrl}/personagens/${personagem.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Falha ao excluir o personagem.");
+        }
+
+        toast.success("Personagem excluído com sucesso!");
+        navigate("/");
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
+      }
+    }
+  };
+
+
   if (loading) {
     return <h2 className="text-center text-white text-2xl mt-8">Carregando ficha do personagem...</h2>;
   }
@@ -75,6 +102,24 @@ export default function FichaPersonagem() {
 
   return (
     <div className="max-w-4xl mx-auto mt-6 p-6 bg-gray-800 border border-gray-700 rounded-lg shadow-lg text-white">
+      <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-600">
+          <div>
+              <h1 className="text-4xl font-bold tracking-tight">{personagem.nome}</h1>
+              {personagem.raca && (
+                  <p className="text-xl text-gray-300 mt-1">{personagem.raca}</p>
+              )}
+          </div>
+          {jogador && jogador.usuarioId === personagem.usuario_id && (
+              <div className="flex items-center space-x-2">
+              <Link to={`/personagem/${personagem.id}/editar`} className="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Editar
+              </Link>
+              <button onClick={excluirPersonagem} className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Excluir
+              </button>
+            </div>
+          )}
+      </div>
       <div className="border-b border-gray-600 pb-4 mb-4">
         <h1 className="text-4xl font-bold tracking-tight">{personagem.nome}</h1>
         {personagem.raca && (

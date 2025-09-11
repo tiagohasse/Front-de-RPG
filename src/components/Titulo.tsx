@@ -7,7 +7,7 @@ export default function Titulo() {
     const navigate = useNavigate()
 
     function jogadorSair() {
-        if (confirm("Confirma sua saída do jogo?")) {
+        if (confirm("Tem certeza que quer sair?")) {
             deslogaJogador()
             if (localStorage.getItem("rpg_token")) {
                 localStorage.removeItem("rpg_token")
