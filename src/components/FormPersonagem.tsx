@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useJogadorStore } from "../context/AuthContext";
+import { useEffect, useState } from "react";
 
 type Inputs = {
     nome: string;
@@ -13,10 +14,31 @@ type Inputs = {
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+type SistemaType = {
+    id: number;
+    nome: string;
+};
+
 export default function FormPersonagem() {
     const { register, handleSubmit } = useForm<Inputs>();
     const navigate = useNavigate();
     const { token } = useJogadorStore();
+    const [sistemas, setSistemas] = useState<SistemaType[]>([]);
+
+    useEffect(() => {
+        if (token) {
+            async function buscaSistemas() {
+                const response = await fetch(`${apiUrl}/sistemas`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setSistemas(data);
+                }
+            }
+            buscaSistemas();
+        }
+    }, [token]);
 
     async function criaPersonagem(data: Inputs) {
         let atributosObjeto = null;
@@ -80,10 +102,13 @@ export default function FormPersonagem() {
                                    {...register("raca")} />
                         </div>
                         <div>
-                            <label htmlFor="sistema_id" className="block mb-2 text-sm font-medium">ID do Sistema</label>
-                            <input type="number" id="sistema_id" className="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5" 
-                                   required 
-                                   {...register("sistema_id")} />
+                            <label htmlFor="sistema_id" className="block mb-2 text-sm font-medium">Sistema de RPG</label>
+                            <select id="sistema_id" className="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg block w-full p-2.5" required {...register("sistema_id")}>
+                                <option value="">Selecione um sistema</option>
+                                {sistemas.map(sistema => (
+                                    <option key={sistema.id} value={sistema.id}>{sistema.nome}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="sm:col-span-2">
                             <label htmlFor="descricao" className="block mb-2 text-sm font-medium">Descrição</label>

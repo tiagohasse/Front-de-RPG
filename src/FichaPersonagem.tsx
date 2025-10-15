@@ -22,46 +22,37 @@ export default function FichaPersonagem() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (token && params.personagemId) {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      const buscaDados = async () => {
-        try {
-          const responsePersonagem = await fetch(`${apiUrl}/personagens/${params.personagemId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (!responsePersonagem.ok) throw new Error("Personagem não encontrado.");
-          const dadosPersonagem = await responsePersonagem.json();
-          setPersonagem(dadosPersonagem);
+    const buscaDados = async () => {
+      try {
+        const responsePersonagem = await fetch(`${apiUrl}/personagens/${params.personagemId}`);
+        if (!responsePersonagem.ok) throw new Error("Personagem não encontrado.");
+        const dadosPersonagem = await responsePersonagem.json();
+        setPersonagem(dadosPersonagem);
 
-          const responseSistemas = await fetch(`${apiUrl}/sistemas`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (!responseSistemas.ok) throw new Error("Não foi possível carregar os sistemas.");
-          const dadosSistemas: SistemaType[] = await responseSistemas.json();
-          
-          const sistemaEncontrado = dadosSistemas.find(s => s.id === dadosPersonagem.sistema_id);
-          if (sistemaEncontrado) {
-            setNomeSistema(sistemaEncontrado.nome);
-          } else {
-            setNomeSistema("Sistema não identificado");
-          }
-
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
-          setPersonagem(null);
-        } finally {
-          setLoading(false);
+        const responseSistemas = await fetch(`${apiUrl}/sistemas`);
+        if (!responseSistemas.ok) throw new Error("Não foi possível carregar os sistemas.");
+        const dadosSistemas: SistemaType[] = await responseSistemas.json();
+        
+        const sistemaEncontrado = dadosSistemas.find(s => s.id === dadosPersonagem.sistema_id);
+        if (sistemaEncontrado) {
+          setNomeSistema(sistemaEncontrado.nome);
+        } else {
+          setNomeSistema("Sistema não identificado");
         }
-      };
 
-      buscaDados();
-    } else {
-      setLoading(false);
-      if (!token) setError("Você precisa estar logado para ver a ficha de um personagem.");
-    }
-  }, [token, params.personagemId]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
+        setPersonagem(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    buscaDados();
+  }, [params.personagemId]);
 
   const excluirPersonagem = async () => {
     if (!personagem) return;
@@ -148,6 +139,19 @@ export default function FichaPersonagem() {
           )}
         </div>
       </div>
+
+      {personagem.campanhas && personagem.campanhas.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold mb-3 text-yellow-400">Campanhas</h2>
+          <div className="flex flex-wrap gap-2">
+            {personagem.campanhas.map((item) => (
+              <Link to={`/campanhas/${item.campanha.id}`} key={item.campanha.id} className="bg-gray-700 text-gray-200 text-sm font-medium me-2 px-2.5 py-0.5 rounded hover:bg-gray-600">
+                {item.campanha.nome}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
       
       <div className="text-center border-t border-gray-600 pt-4 mt-4 text-sm text-gray-400">
         <p>Sistema: {nomeSistema || `ID ${personagem.sistema_id}`}</p>

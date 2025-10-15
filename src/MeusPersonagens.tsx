@@ -6,24 +6,32 @@ import { Link } from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export default function App() {
+export default function MeusPersonagens() {
   const [personagens, setPersonagens] = useState<PersonagemType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { jogador, token } = useJogadorStore();
 
   useEffect(() => {
-    async function buscaDados() {
-      const response = await fetch(`${apiUrl}/personagens`);
-      
-      if (response.ok) {
-          const dados = await response.json();
-          setPersonagens(Array.isArray(dados) ? dados : []);
-      } else {
-          setPersonagens([]);
+    if (token) {
+      async function buscaDados() {
+        const response = await fetch(`${apiUrl}/usuarios/me/personagens`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+            const dados = await response.json();
+            setPersonagens(Array.isArray(dados) ? dados : []);
+        } else {
+            setPersonagens([]);
+        }
       }
+      buscaDados();
+    } else {
+      setPersonagens([]);
     }
-    buscaDados();
-  }, []);
+  }, [token]);
 
   const filteredPersonagens = personagens.filter(personagem =>
     personagem.nome.toLowerCase().includes(searchTerm.toLowerCase())
@@ -37,7 +45,7 @@ export default function App() {
     <div className="max-w-7xl mx-auto mt-6">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-5xl dark:text-white">
-          Personagens em Destaque
+          Meus Personagens
         </h1>
         {jogador && jogador.usuarioId && (
           <Link
@@ -71,7 +79,7 @@ export default function App() {
         </div>
       ) : (
         <p className="text-gray-500 dark:text-gray-400">
-          Nenhum personagem encontrado no reino.
+          Você ainda não criou nenhum personagem.
         </p>
       )}
     </div>

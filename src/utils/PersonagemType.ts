@@ -7,4 +7,5 @@ export type PersonagemType = {
     atributos: any;
     usuario_id: number;
     sistema_id: number;
+    campanhas?: { campanha: { id: number; nome: string } }[];
 }
