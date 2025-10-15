@@ -2,7 +2,6 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useJogadorStore } from "./context/AuthContext";
 import type { CampanhaType } from "./utils/CampanhaType";
-import { toast } from "sonner";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
