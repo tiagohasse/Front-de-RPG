@@ -13,7 +13,7 @@ type SistemaType = {
 
 export default function FichaPersonagem() {
   const params = useParams();
-  const navigate = useNavigate(); // 2. Inicializado o hook de navegação
+  const navigate = useNavigate();
   const { token, jogador } = useJogadorStore();
 
   const [personagem, setPersonagem] = useState<PersonagemType | null>(null);

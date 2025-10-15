@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useJogadorStore } from "./context/AuthContext";
 import type { PersonagemType } from "./utils/PersonagemType";
@@ -24,7 +24,6 @@ export default function GerenciarCampanhaPersonagens() {
     if (!token || !campanhaId) return;
     setLoading(true);
     try {
-      // Fetch campaign details (including assigned characters)
       const campResponse = await fetch(`${apiUrl}/campanhas/${campanhaId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -32,7 +31,6 @@ export default function GerenciarCampanhaPersonagens() {
       const campData = await campResponse.json();
       setCampanha(campData);
 
-      // Fetch all characters
       const persResponse = await fetch(`${apiUrl}/personagens`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -63,7 +61,7 @@ export default function GerenciarCampanhaPersonagens() {
       });
       if (!response.ok) throw new Error("Falha ao adicionar personagem.");
       toast.success("Personagem adicionado!");
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao adicionar");
     }
@@ -77,7 +75,7 @@ export default function GerenciarCampanhaPersonagens() {
       });
       if (!response.ok) throw new Error("Falha ao remover personagem.");
       toast.success("Personagem removido!");
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao remover");
     }

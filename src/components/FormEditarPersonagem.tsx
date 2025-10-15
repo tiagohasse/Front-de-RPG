@@ -11,7 +11,6 @@ type Inputs = {
     descricao: string;
     sistema_id: number;
     atributosJSON: string;
-    // campanha_id: number | null; // Removed campanha_id from Inputs
 };
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -37,7 +36,6 @@ export default function FormEditarPersonagem() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // State to hold the selected campaign ID for the dropdown
     const [selectedCampanhaId, setSelectedCampanhaId] = useState<number | null>(null);
 
     useEffect(() => {
@@ -49,7 +47,6 @@ export default function FormEditarPersonagem() {
 
         async function fetchData() {
             try {
-                // Fetch Personagem Data
                 if (personagemId) {
                     const responsePersonagem = await fetch(`${apiUrl}/personagens/${personagemId}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
@@ -65,7 +62,6 @@ export default function FormEditarPersonagem() {
                         atributosJSON: JSON.stringify(dadosPersonagem.atributos, null, 2),
                     });
 
-                    // Pre-fill selected campaign if available
                     if (dadosPersonagem.campanhas && dadosPersonagem.campanhas.length > 0) {
                         setSelectedCampanhaId(dadosPersonagem.campanhas[0].campanha_id);
                     } else {
@@ -73,7 +69,6 @@ export default function FormEditarPersonagem() {
                     }
                 }
 
-                // Fetch Sistemas
                 const responseSistemas = await fetch(`${apiUrl}/sistemas`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -81,7 +76,6 @@ export default function FormEditarPersonagem() {
                 const dadosSistemas: SistemaType[] = await responseSistemas.json();
                 setSistemas(dadosSistemas);
 
-                // Fetch Campanhas
                 const responseCampanhas = await fetch(`${apiUrl}/campanhas`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -116,12 +110,12 @@ export default function FormEditarPersonagem() {
             descricao: data.descricao,
             sistema_id: Number(data.sistema_id),
             atributos: atributosObjeto,
-            campanha_id: selectedCampanhaId, // Send selectedCampanhaId separately
+            campanha_id: selectedCampanhaId,
         };
 
         try {
             const response = await fetch(`${apiUrl}/personagens/${personagemId}`, {
-                method: "PUT", // Use PUT for updates
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,

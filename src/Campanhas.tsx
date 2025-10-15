@@ -46,7 +46,7 @@ export default function Campanhas() {
         });
         if (!response.ok) throw new Error("Falha ao excluir a campanha.");
         toast.success("Campanha excluída com sucesso!");
-        buscaCampanhas(); // Re-fetch the list
+        buscaCampanhas();
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Erro desconhecido.");
       }

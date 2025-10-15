@@ -43,7 +43,7 @@ export default function Sistemas() {
         });
         if (!response.ok) throw new Error("Falha ao excluir o sistema.");
         toast.success("Sistema excluído com sucesso!");
-        buscaSistemas(); // Re-fetch the list
+        buscaSistemas();
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Erro desconhecido.");
       }

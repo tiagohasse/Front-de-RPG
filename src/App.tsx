@@ -9,7 +9,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export default function App() {
   const [personagens, setPersonagens] = useState<PersonagemType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { jogador, token } = useJogadorStore();
+  const { jogador } = useJogadorStore();
 
   useEffect(() => {
     async function buscaDados() {

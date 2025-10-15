@@ -22,7 +22,7 @@ export default function FormSistema() {
     if (isEditing && token) {
       async function carregarDados() {
         try {
-          const response = await fetch(`${apiUrl}/sistemas`, { // Fetch all to find the one
+          const response = await fetch(`${apiUrl}/sistemas`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (!response.ok) throw new Error("Falha ao carregar dados do sistema.");

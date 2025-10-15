@@ -31,7 +31,6 @@ export default function FormCampanha() {
   useEffect(() => {
     async function carregarDados() {
       try {
-        // Carregar sistemas para o dropdown
         const responseSistemas = await fetch(`${apiUrl}/sistemas`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -39,14 +38,12 @@ export default function FormCampanha() {
           setSistemas(await responseSistemas.json());
         }
 
-        // Se estiver editando, carregar dados da campanha
         if (isEditing) {
           const responseCampanha = await fetch(`${apiUrl}/campanhas/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (!responseCampanha.ok) throw new Error("Falha ao carregar dados da campanha.");
           const data = await responseCampanha.json();
-          // Formata a data para o input type="date"
           const formattedData = {
             ...data,
             data_inicio: data.data_inicio ? new Date(data.data_inicio).toISOString().split('T')[0] : '',
